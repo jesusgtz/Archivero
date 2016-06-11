@@ -28,7 +28,7 @@ public class Connect {
 
 	public Connect() {
 		this.host = "jdbc:mysql://localhost:3306/";
-		this.dbname = "DBPA";
+		this.dbname = "DBCMMI_FINAL";
 		this.username = "root";
 		this.password = "";
 		this.conn = null;
