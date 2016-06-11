@@ -5,6 +5,12 @@
  */
 package tecnm.cmmi;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import tecnm.cmmi.db.Connect;
+
 public class Login extends javax.swing.JFrame {
 
 	/**
@@ -26,20 +32,25 @@ public class Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        entrar_btn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         email_txt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        password_txt = new javax.swing.JTextField();
+        matricula_txt = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Entrar");
-        jButton1.setToolTipText("Acceder al sistema");
-        jButton1.setPreferredSize(new java.awt.Dimension(69, 44));
-        getContentPane().add(jButton1, java.awt.BorderLayout.PAGE_END);
+        entrar_btn.setText("Entrar");
+        entrar_btn.setToolTipText("Acceder al sistema");
+        entrar_btn.setPreferredSize(new java.awt.Dimension(69, 44));
+        entrar_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                entrar_btnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(entrar_btn, java.awt.BorderLayout.PAGE_END);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         jLabel1.setText("  Login");
@@ -47,11 +58,13 @@ public class Login extends javax.swing.JFrame {
 
         jLabel2.setText("Email");
 
+        email_txt.setText("daniel.carlos.sc@itszapopan.edu.mx");
         email_txt.setToolTipText("Ingresa tu email");
 
-        jLabel3.setText("Password");
+        jLabel3.setText("Matricula");
 
-        password_txt.setToolTipText("Ingresa tu password");
+        matricula_txt.setText("1234567890");
+        matricula_txt.setToolTipText("Ingresa tu password");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -60,7 +73,7 @@ public class Login extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(85, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(password_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(matricula_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel2)
                     .addComponent(email_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -76,7 +89,7 @@ public class Login extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(password_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(matricula_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(104, Short.MAX_VALUE))
         );
 
@@ -84,6 +97,22 @@ public class Login extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void entrar_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entrar_btnActionPerformed
+        
+		try {
+			Connect conn = new Connect();
+			String query = "SELECT * FROM Usuarios WHERE Correo='"+ this.email_txt.getText() +"' AND Matricula='"+ this.matricula_txt.getText() +"';";
+			ResultSet rst = conn.Select(query);
+			if (rst != null) {
+				while(rst.next()) {
+					System.out.println("Nombre: "+ rst.getString("Nombre"));
+				}
+			}
+		} catch (SQLException ex) {
+			System.out.println("Error en Login: "+ ex.getMessage());
+		}
+    }//GEN-LAST:event_entrar_btnActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -122,11 +151,11 @@ public class Login extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField email_txt;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton entrar_btn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField password_txt;
+    private javax.swing.JTextField matricula_txt;
     // End of variables declaration//GEN-END:variables
 }
