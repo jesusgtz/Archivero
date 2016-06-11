@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import tecnm.cmmi.db.Connect;
 
 public class Login extends javax.swing.JFrame {
@@ -112,13 +113,15 @@ public class Login extends javax.swing.JFrame {
         
 		try {
 			Connect conn = new Connect();
-			String query = "SELECT * FROM Usuarios WHERE Correo='"+ this.email_txt.getText() +"' AND Matricula='"+ this.matricula_txt.getText() +"';";
+			String query = "SELECT Id_Usuario, Tipo FROM Usuarios WHERE Correo='"+ this.email_txt.getText() +"' AND Matricula='"+ this.matricula_txt.getText() +"';";
 			ResultSet rst = conn.Select(query);
 			if (rst != null) {
 				boolean empty = true;
 				while(rst.next()) {
 					empty = false;
-					System.out.println("Nombre: "+ rst.getString("Nombre"));
+					query = rst.getString("Tipo");
+					if("ADMIN".equals(query)) JOptionPane.showMessageDialog(null, "Acceso a 'Admin'", "Login", JOptionPane.INFORMATION_MESSAGE);
+					else JOptionPane.showMessageDialog(null, "Acceso a 'Student'", "Login", JOptionPane.INFORMATION_MESSAGE);
 				}
 				
 				if(empty) this.error_lbl.setText("Error: Usuario y/o contraseña no coinciden.");
