@@ -39,6 +39,7 @@ public class Login extends javax.swing.JFrame {
         email_txt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         matricula_txt = new javax.swing.JTextField();
+        error_lbl = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -66,18 +67,25 @@ public class Login extends javax.swing.JFrame {
         matricula_txt.setText("1234567890");
         matricula_txt.setToolTipText("Ingresa tu password");
 
+        error_lbl.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        error_lbl.setForeground(new java.awt.Color(204, 0, 0));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(85, Short.MAX_VALUE)
+                .addContainerGap(75, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(matricula_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel2)
                     .addComponent(email_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(81, 81, 81))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(error_lbl)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -90,7 +98,9 @@ public class Login extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(matricula_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(104, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addComponent(error_lbl)
+                .addGap(41, 41, 41))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -105,9 +115,16 @@ public class Login extends javax.swing.JFrame {
 			String query = "SELECT * FROM Usuarios WHERE Correo='"+ this.email_txt.getText() +"' AND Matricula='"+ this.matricula_txt.getText() +"';";
 			ResultSet rst = conn.Select(query);
 			if (rst != null) {
+				boolean empty = true;
 				while(rst.next()) {
+					empty = false;
 					System.out.println("Nombre: "+ rst.getString("Nombre"));
 				}
+				
+				if(empty) this.error_lbl.setText("Error: Usuario y/o contraseña no coinciden.");
+				else this.error_lbl.setText("");
+			} else {
+				this.error_lbl.setText("Error: Ocurrio un error interno.");
 			}
 		} catch (SQLException ex) {
 			System.out.println("Error en Login: "+ ex.getMessage());
@@ -152,6 +169,7 @@ public class Login extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField email_txt;
     private javax.swing.JButton entrar_btn;
+    private javax.swing.JLabel error_lbl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
