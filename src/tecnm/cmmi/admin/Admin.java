@@ -298,13 +298,13 @@ public class Admin extends javax.swing.JFrame {
 		query += "Proyectos.Id_Usuario="+ idUser;
 
 		if(!conn.Query(query)) {
-			this.loadRegisters();
-			
 			this.resumeProyecto_txt.setText("");
 			this.visualizar_btn.setEnabled(false);
 			this.eliminar_btn.setEnabled(false);
 			
 			JOptionPane.showMessageDialog(this, "Proyecto eliminado.", "Eliminación de proyectos", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.loadRegisters();
 		} else {
 			JOptionPane.showMessageDialog(null, "No se pudo eliminar el proyecto.", "Eliminación de proyectos", JOptionPane.ERROR_MESSAGE);
 		}
