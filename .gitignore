@@ -3,6 +3,7 @@
 /dist/
 /data/db/*.mwb.bak
 /data/db/*.sql~
+/data/db/*.png*
 /data/diagrams/*.vpp~*
 /data/diagrams/*.jpg
 /data/diagrams/*.jpeg
