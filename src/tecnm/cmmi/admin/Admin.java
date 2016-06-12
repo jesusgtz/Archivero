@@ -156,6 +156,11 @@ public class Admin extends javax.swing.JFrame {
         jPanel2.add(resumeProyecto_txt);
 
         visualizar_btn.setText("Visualizar");
+        visualizar_btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                visualizar_btnMouseReleased(evt);
+            }
+        });
         jPanel2.add(visualizar_btn);
 
         eliminar_btn.setText("Eliminar");
@@ -199,6 +204,10 @@ public class Admin extends javax.swing.JFrame {
     private void cargarProyectos_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cargarProyectos_btnMouseReleased
         this.loadRegisters();
     }//GEN-LAST:event_cargarProyectos_btnMouseReleased
+
+    private void visualizar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_visualizar_btnMouseReleased
+        JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_visualizar_btnMouseReleased
 
 	
 	private void setHeader() {
