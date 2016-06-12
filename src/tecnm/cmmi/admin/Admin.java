@@ -148,12 +148,26 @@ public class Admin extends javax.swing.JFrame {
             }
         ));
         listaProyectosUsuarios_tbl.getTableHeader().setReorderingAllowed(false);
+        listaProyectosUsuarios_tbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                listaProyectosUsuarios_tblMouseReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(listaProyectosUsuarios_tbl);
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void listaProyectosUsuarios_tblMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaProyectosUsuarios_tblMouseReleased
+        int row = this.listaProyectosUsuarios_tbl.getSelectedRow();
+		String usermatricula = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 0);
+		String nomProyecto = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 2);
+		this.idProyecto = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 3));
+		
+		this.resumeProyecto_txt.setText("["+ usermatricula +"] - "+ nomProyecto);
+    }//GEN-LAST:event_listaProyectosUsuarios_tblMouseReleased
 
 	/**
 	 * @param args the command line arguments
