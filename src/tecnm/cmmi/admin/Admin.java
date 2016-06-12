@@ -1,16 +1,10 @@
 package tecnm.cmmi.admin;
 
-import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import tecnm.cmmi.db.Connect;
-import tecnm.cmmi.visorpdf.VisorScreen;
 
 /**
  *
@@ -23,9 +17,10 @@ public class Admin extends javax.swing.JFrame {
 	private String correo;
 	private String nombre;
 	
+	private int idUserReg;
 	private int idProyecto;
 	
-	private final String COLUMNS[] = {"Matricula", "Estudiante", "Proyecto", "ID", "Fecha"};
+	private final String COLUMNS[] = {"IDU", "Estudiante", "Proyecto", "IDP", "Fecha"};
 	private DefaultTableModel tableModel;
 
 	/**
@@ -42,7 +37,8 @@ public class Admin extends javax.swing.JFrame {
 		this.correo = correo;
 		this.nombre = nombre;
 		
-		this.idProyecto = 0;
+		this.idUserReg = -1;
+		this.idProyecto = -1;
 		
 		this.setTitle("Panel de Administración");
 		initComponents();
@@ -151,14 +147,27 @@ public class Admin extends javax.swing.JFrame {
         jLabel4.setText("Proyecto:");
         jPanel2.add(jLabel4);
 
+        resumeProyecto_txt.setEditable(false);
         resumeProyecto_txt.setFont(new java.awt.Font("Droid Sans Mono", 0, 13)); // NOI18N
         resumeProyecto_txt.setPreferredSize(new java.awt.Dimension(400, 35));
         jPanel2.add(resumeProyecto_txt);
 
         visualizar_btn.setText("Visualizar");
+        visualizar_btn.setEnabled(false);
+        visualizar_btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                visualizar_btnMouseReleased(evt);
+            }
+        });
         jPanel2.add(visualizar_btn);
 
         eliminar_btn.setText("Eliminar");
+        eliminar_btn.setEnabled(false);
+        eliminar_btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                eliminar_btnMouseReleased(evt);
+            }
+        });
         jPanel2.add(eliminar_btn);
 
         agregar_btn.setText("Agregar");
@@ -189,16 +198,28 @@ public class Admin extends javax.swing.JFrame {
 
     private void listaProyectosUsuarios_tblMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaProyectosUsuarios_tblMouseReleased
         int row = this.listaProyectosUsuarios_tbl.getSelectedRow();
-		String usermatricula = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 0);
+		this.idUserReg = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 0));
 		String nomProyecto = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 2);
 		this.idProyecto = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 3));
 		
-		this.resumeProyecto_txt.setText("["+ usermatricula +"] - "+ nomProyecto);
+		this.resumeProyecto_txt.setText("["+ this.idProyecto +"] - "+ nomProyecto);
+		this.visualizar_btn.setEnabled(true);
+		this.eliminar_btn.setEnabled(true);
     }//GEN-LAST:event_listaProyectosUsuarios_tblMouseReleased
 
     private void cargarProyectos_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cargarProyectos_btnMouseReleased
         this.loadRegisters();
     }//GEN-LAST:event_cargarProyectos_btnMouseReleased
+
+    private void visualizar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_visualizar_btnMouseReleased
+        if(this.idProyecto != -1) {
+			JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
+		}
+    }//GEN-LAST:event_visualizar_btnMouseReleased
+
+    private void eliminar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eliminar_btnMouseReleased
+        if(this.idUserReg != -1 && this.idProyecto != -1) this.deleteReg(this.idUserReg, this.idProyecto);
+    }//GEN-LAST:event_eliminar_btnMouseReleased
 
 	
 	private void setHeader() {
@@ -213,39 +234,76 @@ public class Admin extends javax.swing.JFrame {
 		this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(4)).setMaxWidth(150);
 	}
 	
+	private void clearTable(int totalRegs) {
+		while(totalRegs-- > 0) this.tableModel.removeRow(0);
+	}
+	
 	private void loadRegisters() {
 		try {
 			Connect conn = new Connect();
 			
-			String query = "SELECT Proyectos.Id_Proyecto, Proyectos.Id_Usuario AS idUsuarioProyecto, Proyectos.Nombre AS pNombre, Proyectos.Fecha, Usuarios.Matricula, Usuarios.Nombre AS uNombre, Usuarios.Apellidos FROM Proyectos, Usuarios ";
+			String query = "SELECT Proyectos.Id_Proyecto, Proyectos.Id_Usuario AS idUsuarioProyecto, Proyectos.Nombre AS pNombre, Proyectos.Fecha, Usuarios.Id_Usuario AS Id_Student, Usuarios.Nombre AS uNombre, Usuarios.Apellidos FROM Proyectos, Usuarios ";
 			query += "WHERE Proyectos.Id_Usuario=Usuarios.Id_Usuario;";
 			
 			ResultSet rst = conn.Select(query);
 			if(rst != null) {
+				
+				this.idUserReg = -1;
+				this.idProyecto = -1;
+				
+				int n = this.tableModel.getRowCount(); // registros que se muestran actualmente
+				if(n > 0) this.clearTable(n);
+				
+				this.resumeProyecto_txt.setText("");
+				this.visualizar_btn.setEnabled(false);
+				this.eliminar_btn.setEnabled(false);
+				
 				boolean vacio = true;
 				while(rst.next()) {
 					vacio = false;
 					String[] row = new String[this.COLUMNS.length];
-					row[0] = rst.getString("Matricula");
+					row[0] = rst.getString("Id_Student");
 					row[1] = rst.getString("uNombre") + " " + rst.getString("Apellidos");
 					row[2] = rst.getString("pNombre");
 					row[3] = rst.getString("Id_Proyecto");
 					row[4] = rst.getString("Fecha");
 					
 					this.tableModel.addRow(row);
-					System.out.println("ROW: "+ Arrays.toString(row));
 				}
 				
 				if(vacio) {
+					this.resumeProyecto_txt.setText("");
+					this.visualizar_btn.setEnabled(false);
+					this.eliminar_btn.setEnabled(false);
 					JOptionPane.showMessageDialog(null, "¿Los alumnos si han hecho su tarea?\nNo existen proyectos para mostrar.", "Lista de Proyectos", JOptionPane.QUESTION_MESSAGE);
 				}
-				//this.listaProyectosUsuarios_tbl.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-				//this.listaProyectosUsuarios_tbl.updateUI();
 			} else {
 				JOptionPane.showMessageDialog(null, "Imposible recuperar lista de proyectos", "Lista de Proyectos", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (SQLException ex) {
-			//
+			JOptionPane.showInternalMessageDialog(this, "Imposible cargaar los proyectos.", "Cargar Proyectos", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	
+	private void deleteReg(int idUser, int idProyecto) {
+		
+		Connect conn = new Connect();
+
+		String query = "DELETE FROM Proyectos ";
+		query += "WHERE Proyectos.Id_Proyecto="+ idProyecto +" AND ";
+		query += "Proyectos.Id_Usuario="+ idUser;
+
+		if(!conn.Query(query)) {
+			this.resumeProyecto_txt.setText("");
+			this.visualizar_btn.setEnabled(false);
+			this.eliminar_btn.setEnabled(false);
+			
+			JOptionPane.showMessageDialog(this, "Proyecto eliminado.", "Eliminación de proyectos", JOptionPane.INFORMATION_MESSAGE);
+			
+			this.loadRegisters();
+		} else {
+			JOptionPane.showMessageDialog(null, "No se pudo eliminar el proyecto.", "Eliminación de proyectos", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

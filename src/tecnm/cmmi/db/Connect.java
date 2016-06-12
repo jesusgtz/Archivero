@@ -10,6 +10,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 
@@ -47,11 +49,19 @@ public class Connect {
 		ResultSet results = null;
 		try {
 			if(!this.conn.isClosed()) results = this.stm.executeQuery(query);
-			// else System.out.println("No se pudo conectar.. :(");
 		} catch (SQLException er) {
-			System.out.println("Error: " + er.getMessage());
+			System.out.println("Connect::Select >> "+ er.getMessage());
 		}
 		return results;
+	}
+	
+	public boolean Query(String query) {
+		try {
+			return this.stm.execute(query);
+		} catch (SQLException ex) {
+			System.out.println("Connect::Query >> "+ ex.getMessage());
+		}
+		return false;
 	}
 	
 	
