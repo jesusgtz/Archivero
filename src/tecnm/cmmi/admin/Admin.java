@@ -150,7 +150,6 @@ public class Admin extends javax.swing.JFrame {
 
         resumeProyecto_txt.setEditable(false);
         resumeProyecto_txt.setFont(new java.awt.Font("Droid Sans Mono", 0, 13)); // NOI18N
-        resumeProyecto_txt.setEnabled(false);
         resumeProyecto_txt.setPreferredSize(new java.awt.Dimension(400, 35));
         jPanel2.add(resumeProyecto_txt);
 
@@ -205,7 +204,6 @@ public class Admin extends javax.swing.JFrame {
 		this.idProyecto = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 3));
 		
 		this.resumeProyecto_txt.setText("["+ this.idProyecto +"] - "+ nomProyecto);
-		this.resumeProyecto_txt.setEnabled(true);
 		this.visualizar_btn.setEnabled(true);
 		this.eliminar_btn.setEnabled(true);
     }//GEN-LAST:event_listaProyectosUsuarios_tblMouseReleased
@@ -239,6 +237,10 @@ public class Admin extends javax.swing.JFrame {
 		this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(4)).setMaxWidth(150);
 	}
 	
+	private void clearTable(int totalRegs) {
+		while(totalRegs-- > 0) this.tableModel.removeRow(0);
+	}
+	
 	private void loadRegisters() {
 		try {
 			Connect conn = new Connect();
@@ -248,6 +250,14 @@ public class Admin extends javax.swing.JFrame {
 			
 			ResultSet rst = conn.Select(query);
 			if(rst != null) {
+				
+				int n = this.tableModel.getRowCount(); // registros que se muestran actualmente
+				if(n > 0) this.clearTable(n);
+				
+				this.resumeProyecto_txt.setText("");
+				this.visualizar_btn.setEnabled(false);
+				this.eliminar_btn.setEnabled(false);
+				
 				boolean vacio = true;
 				while(rst.next()) {
 					vacio = false;
@@ -259,11 +269,10 @@ public class Admin extends javax.swing.JFrame {
 					row[4] = rst.getString("Fecha");
 					
 					this.tableModel.addRow(row);
-					System.out.println("ROW: "+ Arrays.toString(row));
 				}
 				
 				if(vacio) {
-					this.resumeProyecto_txt.setEnabled(false);
+					this.resumeProyecto_txt.setText("");
 					this.visualizar_btn.setEnabled(false);
 					this.eliminar_btn.setEnabled(false);
 					JOptionPane.showMessageDialog(null, "¿Los alumnos si han hecho su tarea?\nNo existen proyectos para mostrar.", "Lista de Proyectos", JOptionPane.QUESTION_MESSAGE);
@@ -288,6 +297,12 @@ public class Admin extends javax.swing.JFrame {
 		query += "Proyectos.Id_Usuario="+ idUser;
 
 		if(!conn.Query(query)) {
+			this.loadRegisters();
+			
+			this.resumeProyecto_txt.setText("");
+			this.visualizar_btn.setEnabled(false);
+			this.eliminar_btn.setEnabled(false);
+			
 			JOptionPane.showMessageDialog(this, "Proyecto eliminado.", "Eliminación de proyectos", JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			JOptionPane.showMessageDialog(null, "No se pudo eliminar el proyecto.", "Eliminación de proyectos", JOptionPane.ERROR_MESSAGE);
