@@ -2,9 +2,12 @@ package tecnm.cmmi.Usuario;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import tecnm.cmmi.db.Connect;
+import tecnm.cmmi.agregar.Agregar;
 
 /**
  *
@@ -40,7 +43,7 @@ public class Usuario extends javax.swing.JFrame {
 		this.idUserReg = -1;
 		this.idProyecto = -1;
 		
-		this.setTitle("Panel de Usuarioistración");
+		this.setTitle("Panel de Usuario");
 		initComponents();
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
@@ -69,7 +72,6 @@ public class Usuario extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         resumeProyecto_txt = new javax.swing.JTextField();
         visualizar_btn = new javax.swing.JButton();
-        eliminar_btn = new javax.swing.JButton();
         agregar_btn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listaProyectosUsuarios_tbl = new javax.swing.JTable();
@@ -159,18 +161,19 @@ public class Usuario extends javax.swing.JFrame {
                 visualizar_btnMouseReleased(evt);
             }
         });
-        jPanel2.add(visualizar_btn);
-
-        eliminar_btn.setText("Eliminar");
-        eliminar_btn.setEnabled(false);
-        eliminar_btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                eliminar_btnMouseReleased(evt);
+        visualizar_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                visualizar_btnActionPerformed(evt);
             }
         });
-        jPanel2.add(eliminar_btn);
+        jPanel2.add(visualizar_btn);
 
         agregar_btn.setText("Agregar");
+        agregar_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregar_btnActionPerformed(evt);
+            }
+        });
         jPanel2.add(agregar_btn);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
@@ -204,7 +207,7 @@ public class Usuario extends javax.swing.JFrame {
 		
 		this.resumeProyecto_txt.setText("["+ this.idProyecto +"] - "+ nomProyecto);
 		this.visualizar_btn.setEnabled(true);
-		this.eliminar_btn.setEnabled(true);
+		//this.eliminar_btn.setEnabled(true);
     }//GEN-LAST:event_listaProyectosUsuarios_tblMouseReleased
 
     private void cargarProyectos_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cargarProyectos_btnMouseReleased
@@ -217,9 +220,15 @@ public class Usuario extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_visualizar_btnMouseReleased
 
-    private void eliminar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eliminar_btnMouseReleased
-        if(this.idUserReg != -1 && this.idProyecto != -1) this.deleteReg(this.idUserReg, this.idProyecto);
-    }//GEN-LAST:event_eliminar_btnMouseReleased
+    private void visualizar_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visualizar_btnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_visualizar_btnActionPerformed
+
+    private void agregar_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_btnActionPerformed
+        // TODO add your handling code here:
+        Agregar add = new Agregar();
+        add.setVisible(true);
+    }//GEN-LAST:event_agregar_btnActionPerformed
 
 	
 	private void setHeader() {
@@ -243,7 +252,7 @@ public class Usuario extends javax.swing.JFrame {
 			Connect conn = new Connect();
 			
 			String query = "SELECT Proyectos.Id_Proyecto, Proyectos.Id_Usuario AS idUsuarioProyecto, Proyectos.Nombre AS pNombre, Proyectos.Fecha, Usuarios.Id_Usuario AS Id_Student, Usuarios.Nombre AS uNombre, Usuarios.Apellidos FROM Proyectos, Usuarios ";
-			query += "WHERE Proyectos.Id_Usuario=Usuarios.Id_Usuario and;";
+			query += "WHERE Proyectos.Id_Usuario="+ this.idUser;
 			
 			ResultSet rst = conn.Select(query);
 			if(rst != null) {
@@ -256,7 +265,7 @@ public class Usuario extends javax.swing.JFrame {
 				
 				this.resumeProyecto_txt.setText("");
 				this.visualizar_btn.setEnabled(false);
-				this.eliminar_btn.setEnabled(false);
+				//this.eliminar_btn.setEnabled(false);
 				
 				boolean vacio = true;
 				while(rst.next()) {
@@ -274,37 +283,17 @@ public class Usuario extends javax.swing.JFrame {
 				if(vacio) {
 					this.resumeProyecto_txt.setText("");
 					this.visualizar_btn.setEnabled(false);
-					this.eliminar_btn.setEnabled(false);
-					JOptionPane.showMessageDialog(null, "¿Los alumnos si han hecho su tarea?\nNo existen proyectos para mostrar.", "Lista de Proyectos", JOptionPane.QUESTION_MESSAGE);
+					//this.eliminar_btn.setEnabled(false);
+                                        JOptionPane.showMessageDialog(null, "\nNo existen proyectos para mostrar.", "Lista de Proyectos", JOptionPane.QUESTION_MESSAGE);
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "Imposible recuperar lista de proyectos", "Lista de Proyectos", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (SQLException ex) {
-			JOptionPane.showInternalMessageDialog(this, "Imposible cargaar los proyectos.", "Cargar Proyectos", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showInternalMessageDialog(this, "Imposible cargar los proyectos.", "Cargar Proyectos", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 		
-	private void deleteReg(int idUser, int idProyecto) {
-		
-		Connect conn = new Connect();
-
-		String query = "DELETE FROM Proyectos ";
-		query += "WHERE Proyectos.Id_Proyecto="+ idProyecto +" AND ";
-		query += "Proyectos.Id_Usuario="+ idUser;
-
-		if(!conn.Query(query)) {
-			this.resumeProyecto_txt.setText("");
-			this.visualizar_btn.setEnabled(false);
-			this.eliminar_btn.setEnabled(false);
-			
-			JOptionPane.showMessageDialog(this, "Proyecto eliminado.", "Eliminación de proyectos", JOptionPane.INFORMATION_MESSAGE);
-			
-			this.loadRegisters();
-		} else {
-			JOptionPane.showMessageDialog(null, "No se pudo eliminar el proyecto.", "Eliminación de proyectos", JOptionPane.ERROR_MESSAGE);
-		}
-	}
 	
 	
 	/**
@@ -337,7 +326,9 @@ public class Usuario extends javax.swing.JFrame {
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new Usuario(1, "1234567890", "daniel.carlos.sc@itszapopan.edu.mx", "Carlos Carlos Daniel").setVisible(true);
+                           
+			 new Usuario(1, "1234567890", "daniel.carlos.sc@itszapopan.edu.mx", "Carlos Carlos Daniel").setVisible(true);
+                                
 			}
 		});
 	}
@@ -346,7 +337,6 @@ public class Usuario extends javax.swing.JFrame {
     private javax.swing.JButton agregar_btn;
     private javax.swing.JButton cargarProyectos_btn;
     private javax.swing.JLabel correo_lbl;
-    private javax.swing.JButton eliminar_btn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
