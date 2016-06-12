@@ -148,11 +148,14 @@ public class Admin extends javax.swing.JFrame {
         jLabel4.setText("Proyecto:");
         jPanel2.add(jLabel4);
 
+        resumeProyecto_txt.setEditable(false);
         resumeProyecto_txt.setFont(new java.awt.Font("Droid Sans Mono", 0, 13)); // NOI18N
+        resumeProyecto_txt.setEnabled(false);
         resumeProyecto_txt.setPreferredSize(new java.awt.Dimension(400, 35));
         jPanel2.add(resumeProyecto_txt);
 
         visualizar_btn.setText("Visualizar");
+        visualizar_btn.setEnabled(false);
         visualizar_btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 visualizar_btnMouseReleased(evt);
@@ -161,6 +164,7 @@ public class Admin extends javax.swing.JFrame {
         jPanel2.add(visualizar_btn);
 
         eliminar_btn.setText("Eliminar");
+        eliminar_btn.setEnabled(false);
         eliminar_btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 eliminar_btnMouseReleased(evt);
@@ -200,7 +204,10 @@ public class Admin extends javax.swing.JFrame {
 		String nomProyecto = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 2);
 		this.idProyecto = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 3));
 		
-		this.resumeProyecto_txt.setText("["+ this.idUserReg +"] - "+ nomProyecto);
+		this.resumeProyecto_txt.setText("["+ this.idProyecto +"] - "+ nomProyecto);
+		this.resumeProyecto_txt.setEnabled(true);
+		this.visualizar_btn.setEnabled(true);
+		this.eliminar_btn.setEnabled(true);
     }//GEN-LAST:event_listaProyectosUsuarios_tblMouseReleased
 
     private void cargarProyectos_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cargarProyectos_btnMouseReleased
@@ -208,7 +215,11 @@ public class Admin extends javax.swing.JFrame {
     }//GEN-LAST:event_cargarProyectos_btnMouseReleased
 
     private void visualizar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_visualizar_btnMouseReleased
-        JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
+        if(!"".equals(this.resumeProyecto_txt.getText())) {
+			JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			//
+		}
     }//GEN-LAST:event_visualizar_btnMouseReleased
 
     private void eliminar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eliminar_btnMouseReleased
@@ -252,6 +263,9 @@ public class Admin extends javax.swing.JFrame {
 				}
 				
 				if(vacio) {
+					this.resumeProyecto_txt.setEnabled(false);
+					this.visualizar_btn.setEnabled(false);
+					this.eliminar_btn.setEnabled(false);
 					JOptionPane.showMessageDialog(null, "¿Los alumnos si han hecho su tarea?\nNo existen proyectos para mostrar.", "Lista de Proyectos", JOptionPane.QUESTION_MESSAGE);
 				}
 				//this.listaProyectosUsuarios_tbl.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
