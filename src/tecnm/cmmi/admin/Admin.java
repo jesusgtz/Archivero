@@ -38,8 +38,8 @@ public class Admin extends javax.swing.JFrame {
 		this.correo = correo;
 		this.nombre = nombre;
 		
-		this.idUserReg = 0;
-		this.idProyecto = 0;
+		this.idUserReg = -1;
+		this.idProyecto = -1;
 		
 		this.setTitle("Panel de Administración");
 		initComponents();
@@ -213,15 +213,13 @@ public class Admin extends javax.swing.JFrame {
     }//GEN-LAST:event_cargarProyectos_btnMouseReleased
 
     private void visualizar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_visualizar_btnMouseReleased
-        if(!"".equals(this.resumeProyecto_txt.getText())) {
+        if(this.idProyecto != -1) {
 			JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			//
 		}
     }//GEN-LAST:event_visualizar_btnMouseReleased
 
     private void eliminar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eliminar_btnMouseReleased
-        this.deleteReg(this.idUserReg, this.idProyecto);
+        if(this.idUserReg != -1 && this.idProyecto != -1) this.deleteReg(this.idUserReg, this.idProyecto);
     }//GEN-LAST:event_eliminar_btnMouseReleased
 
 	
@@ -250,6 +248,9 @@ public class Admin extends javax.swing.JFrame {
 			
 			ResultSet rst = conn.Select(query);
 			if(rst != null) {
+				
+				this.idUserReg = -1;
+				this.idProyecto = -1;
 				
 				int n = this.tableModel.getRowCount(); // registros que se muestran actualmente
 				if(n > 0) this.clearTable(n);
