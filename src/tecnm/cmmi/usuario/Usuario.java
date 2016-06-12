@@ -23,7 +23,7 @@ public class Usuario extends javax.swing.JFrame {
 	private int idUserReg;
 	private int idProyecto;
 	
-	private final String COLUMNS[] = {"IDU", "Estudiante", "Proyecto", "IDP", "Fecha"};
+	private final String COLUMNS[] = {"IDP", "Proyecto", "Fecha"};
 	private DefaultTableModel tableModel;
 
 	/**
@@ -201,13 +201,11 @@ public class Usuario extends javax.swing.JFrame {
 
     private void listaProyectosUsuarios_tblMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaProyectosUsuarios_tblMouseReleased
         int row = this.listaProyectosUsuarios_tbl.getSelectedRow();
-		this.idUserReg = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 0));
-		String nomProyecto = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 2);
-		this.idProyecto = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 3));
-		
-		this.resumeProyecto_txt.setText("["+ this.idProyecto +"] - "+ nomProyecto);
-		this.visualizar_btn.setEnabled(true);
-		//this.eliminar_btn.setEnabled(true);
+        this.idProyecto = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 0));
+        String nomProyecto = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 1);
+
+        this.resumeProyecto_txt.setText("["+ this.idProyecto +"] - "+ nomProyecto);
+        this.visualizar_btn.setEnabled(true);
     }//GEN-LAST:event_listaProyectosUsuarios_tblMouseReleased
 
     private void cargarProyectos_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cargarProyectos_btnMouseReleased
@@ -232,27 +230,30 @@ public class Usuario extends javax.swing.JFrame {
 
 	
 	private void setHeader() {
-		this.tableModel = new DefaultTableModel();
-		this.listaProyectosUsuarios_tbl.setModel(tableModel);
-		
-		for (int i = 0, n = this.COLUMNS.length; i < n; i++)
-			this.tableModel.addColumn(this.COLUMNS[i]);
-		
-		this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(0)).setMaxWidth(180);
-		this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(3)).setMaxWidth(50);
-		this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(4)).setMaxWidth(150);
+            this.tableModel = new DefaultTableModel();
+            this.listaProyectosUsuarios_tbl.setModel(tableModel);
+
+            for (int i = 0, n = this.COLUMNS.length; i < n; i++)
+                    this.tableModel.addColumn(this.COLUMNS[i]);
+
+            this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(0)).setMaxWidth(180);
+            this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(2)).setMaxWidth(150);
 	}
 	
 	private void clearTable(int totalRegs) {
-		while(totalRegs-- > 0) this.tableModel.removeRow(0);
+            while(totalRegs-- > 0) this.tableModel.removeRow(0);
 	}
 	
 	private void loadRegisters() {
 		try {
 			Connect conn = new Connect();
 			
-			String query = "SELECT Proyectos.Id_Proyecto, Proyectos.Id_Usuario AS idUsuarioProyecto, Proyectos.Nombre AS pNombre, Proyectos.Fecha, Usuarios.Id_Usuario AS Id_Student, Usuarios.Nombre AS uNombre, Usuarios.Apellidos FROM Proyectos, Usuarios ";
-			query += "WHERE Proyectos.Id_Usuario="+ this.idUser;
+			String query = "SELECT "
+                                + "Proyectos.Id_Proyecto as idProyecto,"
+                                + "Proyectos.Nombre AS pNombre,"
+                                + "Proyectos.Fecha "
+                                + "FROM Proyectos "
+                            + "WHERE Proyectos.Id_Usuario="+ this.idUser;
 			
 			ResultSet rst = conn.Select(query);
 			if(rst != null) {
@@ -271,11 +272,10 @@ public class Usuario extends javax.swing.JFrame {
 				while(rst.next()) {
 					vacio = false;
 					String[] row = new String[this.COLUMNS.length];
-					row[0] = rst.getString("Id_Student");
-					row[1] = rst.getString("uNombre") + " " + rst.getString("Apellidos");
-					row[2] = rst.getString("pNombre");
-					row[3] = rst.getString("Id_Proyecto");
-					row[4] = rst.getString("Fecha");
+					row[0] = rst.getString("idProyecto");
+					row[1] = rst.getString("pNombre");
+					row[2] = rst.getString("Fecha");
+					//row[4] = rst.getString("Fecha");
 					
 					this.tableModel.addRow(row);
 				}
@@ -327,7 +327,7 @@ public class Usuario extends javax.swing.JFrame {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
                            
-			 new Usuario(1, "1234567890", "daniel.carlos.sc@itszapopan.edu.mx", "Carlos Carlos Daniel").setVisible(true);
+			 new Usuario(3, "1234567890", "daniel.carlos.sc@itszapopan.edu.mx", "Carlos Carlos Daniel").setVisible(true);
                                 
 			}
 		});
