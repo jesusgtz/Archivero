@@ -172,6 +172,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Eliminar"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="eliminar_btnMouseReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="agregar_btn">
           <Properties>

@@ -1,16 +1,11 @@
 package tecnm.cmmi.admin;
 
-import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import tecnm.cmmi.db.Connect;
-import tecnm.cmmi.visorpdf.VisorScreen;
 
 /**
  *
@@ -23,9 +18,10 @@ public class Admin extends javax.swing.JFrame {
 	private String correo;
 	private String nombre;
 	
+	private int idUserReg;
 	private int idProyecto;
 	
-	private final String COLUMNS[] = {"Matricula", "Estudiante", "Proyecto", "ID", "Fecha"};
+	private final String COLUMNS[] = {"IDU", "Estudiante", "Proyecto", "IDP", "Fecha"};
 	private DefaultTableModel tableModel;
 
 	/**
@@ -42,6 +38,7 @@ public class Admin extends javax.swing.JFrame {
 		this.correo = correo;
 		this.nombre = nombre;
 		
+		this.idUserReg = 0;
 		this.idProyecto = 0;
 		
 		this.setTitle("Panel de Administración");
@@ -164,6 +161,11 @@ public class Admin extends javax.swing.JFrame {
         jPanel2.add(visualizar_btn);
 
         eliminar_btn.setText("Eliminar");
+        eliminar_btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                eliminar_btnMouseReleased(evt);
+            }
+        });
         jPanel2.add(eliminar_btn);
 
         agregar_btn.setText("Agregar");
@@ -194,11 +196,11 @@ public class Admin extends javax.swing.JFrame {
 
     private void listaProyectosUsuarios_tblMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaProyectosUsuarios_tblMouseReleased
         int row = this.listaProyectosUsuarios_tbl.getSelectedRow();
-		String usermatricula = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 0);
+		this.idUserReg = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 0));
 		String nomProyecto = (String) this.listaProyectosUsuarios_tbl.getValueAt(row, 2);
 		this.idProyecto = Integer.parseInt((String)this.listaProyectosUsuarios_tbl.getValueAt(row, 3));
 		
-		this.resumeProyecto_txt.setText("["+ usermatricula +"] - "+ nomProyecto);
+		this.resumeProyecto_txt.setText("["+ this.idUserReg +"] - "+ nomProyecto);
     }//GEN-LAST:event_listaProyectosUsuarios_tblMouseReleased
 
     private void cargarProyectos_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cargarProyectos_btnMouseReleased
@@ -208,6 +210,10 @@ public class Admin extends javax.swing.JFrame {
     private void visualizar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_visualizar_btnMouseReleased
         JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_visualizar_btnMouseReleased
+
+    private void eliminar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eliminar_btnMouseReleased
+        this.deleteReg(this.idUserReg, this.idProyecto);
+    }//GEN-LAST:event_eliminar_btnMouseReleased
 
 	
 	private void setHeader() {
@@ -226,7 +232,7 @@ public class Admin extends javax.swing.JFrame {
 		try {
 			Connect conn = new Connect();
 			
-			String query = "SELECT Proyectos.Id_Proyecto, Proyectos.Id_Usuario AS idUsuarioProyecto, Proyectos.Nombre AS pNombre, Proyectos.Fecha, Usuarios.Matricula, Usuarios.Nombre AS uNombre, Usuarios.Apellidos FROM Proyectos, Usuarios ";
+			String query = "SELECT Proyectos.Id_Proyecto, Proyectos.Id_Usuario AS idUsuarioProyecto, Proyectos.Nombre AS pNombre, Proyectos.Fecha, Usuarios.Id_Usuario AS Id_Student, Usuarios.Nombre AS uNombre, Usuarios.Apellidos FROM Proyectos, Usuarios ";
 			query += "WHERE Proyectos.Id_Usuario=Usuarios.Id_Usuario;";
 			
 			ResultSet rst = conn.Select(query);
@@ -235,7 +241,7 @@ public class Admin extends javax.swing.JFrame {
 				while(rst.next()) {
 					vacio = false;
 					String[] row = new String[this.COLUMNS.length];
-					row[0] = rst.getString("Matricula");
+					row[0] = rst.getString("Id_Student");
 					row[1] = rst.getString("uNombre") + " " + rst.getString("Apellidos");
 					row[2] = rst.getString("pNombre");
 					row[3] = rst.getString("Id_Proyecto");
@@ -255,6 +261,22 @@ public class Admin extends javax.swing.JFrame {
 			}
 		} catch (SQLException ex) {
 			//
+		}
+	}
+	
+	
+	private void deleteReg(int idUser, int idProyecto) {
+		
+		Connect conn = new Connect();
+
+		String query = "DELETE FROM Proyectos ";
+		query += "WHERE Proyectos.Id_Proyecto="+ idProyecto +" AND ";
+		query += "Proyectos.Id_Usuario="+ idUser;
+
+		if(!conn.Query(query)) {
+			JOptionPane.showMessageDialog(this, "Proyecto eliminado.", "Eliminación de proyectos", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(null, "No se pudo eliminar el proyecto.", "Eliminación de proyectos", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
