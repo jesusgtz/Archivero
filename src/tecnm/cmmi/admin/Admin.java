@@ -2,7 +2,6 @@ package tecnm.cmmi.admin;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import tecnm.cmmi.db.Connect;
@@ -278,13 +277,11 @@ public class Admin extends javax.swing.JFrame {
 					this.eliminar_btn.setEnabled(false);
 					JOptionPane.showMessageDialog(null, "¿Los alumnos si han hecho su tarea?\nNo existen proyectos para mostrar.", "Lista de Proyectos", JOptionPane.QUESTION_MESSAGE);
 				}
-				//this.listaProyectosUsuarios_tbl.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-				//this.listaProyectosUsuarios_tbl.updateUI();
 			} else {
 				JOptionPane.showMessageDialog(null, "Imposible recuperar lista de proyectos", "Lista de Proyectos", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (SQLException ex) {
-			//
+			JOptionPane.showInternalMessageDialog(this, "Imposible cargaar los proyectos.", "Cargar Proyectos", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
