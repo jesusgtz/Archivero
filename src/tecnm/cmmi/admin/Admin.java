@@ -1,11 +1,16 @@
 package tecnm.cmmi.admin;
 
+import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import tecnm.cmmi.db.Connect;
+import tecnm.cmmi.visorpdf.VisorScreen;
 
 /**
  *
@@ -202,14 +207,18 @@ public class Admin extends javax.swing.JFrame {
 		
 		for (int i = 0, n = this.COLUMNS.length; i < n; i++)
 			this.tableModel.addColumn(this.COLUMNS[i]);
+		
+		this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(0)).setMaxWidth(180);
+		this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(3)).setMaxWidth(50);
+		this.listaProyectosUsuarios_tbl.getColumn(this.tableModel.getColumnName(4)).setMaxWidth(150);
 	}
 	
-	private void loadRegisters() {		
+	private void loadRegisters() {
 		try {
 			Connect conn = new Connect();
 			
 			String query = "SELECT Proyectos.Id_Proyecto, Proyectos.Id_Usuario AS idUsuarioProyecto, Proyectos.Nombre AS pNombre, Proyectos.Fecha, Usuarios.Matricula, Usuarios.Nombre AS uNombre, Usuarios.Apellidos FROM Proyectos, Usuarios ";
-			query += "WHERE Proyectos.Id_Usuario=Usuarios.Id_Usuario AND 1=0;";
+			query += "WHERE Proyectos.Id_Usuario=Usuarios.Id_Usuario;";
 			
 			ResultSet rst = conn.Select(query);
 			if(rst != null) {
@@ -230,7 +239,7 @@ public class Admin extends javax.swing.JFrame {
 				if(vacio) {
 					JOptionPane.showMessageDialog(null, "¿Los alumnos si han hecho su tarea?\nNo existen proyectos para mostrar.", "Lista de Proyectos", JOptionPane.QUESTION_MESSAGE);
 				}
-				
+				//this.listaProyectosUsuarios_tbl.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 				//this.listaProyectosUsuarios_tbl.updateUI();
 			} else {
 				JOptionPane.showMessageDialog(null, "Imposible recuperar lista de proyectos", "Lista de Proyectos", JOptionPane.ERROR_MESSAGE);
