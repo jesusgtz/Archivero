@@ -1,7 +1,11 @@
 package tecnm.cmmi.admin;
 
-import javax.swing.JButton;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import tecnm.cmmi.db.Connect;
 
 /**
  *
@@ -15,6 +19,9 @@ public class Admin extends javax.swing.JFrame {
 	private String nombre;
 	
 	private int idProyecto;
+	
+	private final String COLUMNS[] = {"Matricula", "Estudiante", "Proyecto", "ID", "Fecha"};
+	private DefaultTableModel tableModel;
 
 	/**
 	 * Admin form
@@ -41,7 +48,7 @@ public class Admin extends javax.swing.JFrame {
 		this.matricula_lbl.setText(this.matricula);
 		this.correo_lbl.setText(this.correo);
 		
-		this.loadRegisters();
+		this.setHeader();
 	}
 
 	
@@ -56,6 +63,7 @@ public class Admin extends javax.swing.JFrame {
         nombre_lbl = new javax.swing.JLabel();
         matricula_lbl = new javax.swing.JLabel();
         correo_lbl = new javax.swing.JLabel();
+        cargarProyectos_btn = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         resumeProyecto_txt = new javax.swing.JTextField();
@@ -82,6 +90,13 @@ public class Admin extends javax.swing.JFrame {
 
         correo_lbl.setText("jLabel6");
 
+        cargarProyectos_btn.setText("Cargar Proyectos");
+        cargarProyectos_btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                cargarProyectos_btnMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -96,10 +111,16 @@ public class Admin extends javax.swing.JFrame {
                         .addComponent(jLabel3)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nombre_lbl)
-                    .addComponent(matricula_lbl)
-                    .addComponent(correo_lbl))
-                .addContainerGap(596, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nombre_lbl)
+                            .addComponent(correo_lbl))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(matricula_lbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 424, Short.MAX_VALUE)
+                        .addComponent(cargarProyectos_btn)
+                        .addGap(39, 39, 39))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -111,7 +132,8 @@ public class Admin extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(matricula_lbl))
+                    .addComponent(matricula_lbl)
+                    .addComponent(cargarProyectos_btn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -169,6 +191,56 @@ public class Admin extends javax.swing.JFrame {
 		this.resumeProyecto_txt.setText("["+ usermatricula +"] - "+ nomProyecto);
     }//GEN-LAST:event_listaProyectosUsuarios_tblMouseReleased
 
+    private void cargarProyectos_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cargarProyectos_btnMouseReleased
+        this.loadRegisters();
+    }//GEN-LAST:event_cargarProyectos_btnMouseReleased
+
+	
+	private void setHeader() {
+		this.tableModel = new DefaultTableModel();
+		this.listaProyectosUsuarios_tbl.setModel(tableModel);
+		
+		for (int i = 0, n = this.COLUMNS.length; i < n; i++)
+			this.tableModel.addColumn(this.COLUMNS[i]);
+	}
+	
+	private void loadRegisters() {		
+		try {
+			Connect conn = new Connect();
+			
+			String query = "SELECT Proyectos.Id_Proyecto, Proyectos.Id_Usuario AS idUsuarioProyecto, Proyectos.Nombre AS pNombre, Proyectos.Fecha, Usuarios.Matricula, Usuarios.Nombre AS uNombre, Usuarios.Apellidos FROM Proyectos, Usuarios ";
+			query += "WHERE Proyectos.Id_Usuario=Usuarios.Id_Usuario AND 1=0;";
+			
+			ResultSet rst = conn.Select(query);
+			if(rst != null) {
+				boolean vacio = true;
+				while(rst.next()) {
+					vacio = false;
+					String[] row = new String[this.COLUMNS.length];
+					row[0] = rst.getString("Matricula");
+					row[1] = rst.getString("uNombre") + " " + rst.getString("Apellidos");
+					row[2] = rst.getString("pNombre");
+					row[3] = rst.getString("Id_Proyecto");
+					row[4] = rst.getString("Fecha");
+					
+					this.tableModel.addRow(row);
+					System.out.println("ROW: "+ Arrays.toString(row));
+				}
+				
+				if(vacio) {
+					JOptionPane.showMessageDialog(null, "¿Los alumnos si han hecho su tarea?\nNo existen proyectos para mostrar.", "Lista de Proyectos", JOptionPane.QUESTION_MESSAGE);
+				}
+				
+				//this.listaProyectosUsuarios_tbl.updateUI();
+			} else {
+				JOptionPane.showMessageDialog(null, "Imposible recuperar lista de proyectos", "Lista de Proyectos", JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (SQLException ex) {
+			//
+		}
+	}
+	
+	
 	/**
 	 * @param args the command line arguments
 	 */
@@ -203,27 +275,10 @@ public class Admin extends javax.swing.JFrame {
 			}
 		});
 	}
-	
-	private void loadRegisters() {
-		DefaultTableModel tableModel = new DefaultTableModel();
-		this.listaProyectosUsuarios_tbl.setModel(tableModel);
-		
-		String columns[] = {"Matricula", "Estudiante", "Proyecto", "ID", "Fecha"};
-		for (int i = 0, n = columns.length; i < n; i++)
-				tableModel.addColumn(columns[i]);
-		
-		Object row[] = new Object[5];
-		row[0] = "1234567890";
-		row[1] = "Carlos Carlos Daniel";
-		row[2] = "Sistema de Tutorias";
-		row[3] = "12";
-		row[4] = "24/06/1991";
-		
-		tableModel.addRow(row);
-	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton agregar_btn;
+    private javax.swing.JButton cargarProyectos_btn;
     private javax.swing.JLabel correo_lbl;
     private javax.swing.JButton eliminar_btn;
     private javax.swing.JLabel jLabel1;
