@@ -6,9 +6,11 @@
 package tecnm.cmmi.agregar;
 
 import java.io.File;
+import java.sql.ResultSet;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import tecnm.cmmi.Login;
+import tecnm.cmmi.db.Connect;
 
 /**
  *
@@ -199,8 +201,6 @@ public class Agregar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bntLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bntLoadMousePressed
-        String aux="";   
-        String texto="";
         try
         {
             /**llamamos el metodo que permite cargar la ventana*/
@@ -210,7 +210,45 @@ public class Agregar extends javax.swing.JFrame {
                /**abrimos el archivo seleccionado*/
                File pdf = file.getSelectedFile();
                if(pdf.getName().contains("pdf")){
-                   inputFileName.setText(pdf.getName());
+                    inputFileName.setText(pdf.getName());
+                    Connect conn = new Connect();
+                    String query = "SELECT Id_Usuario FROM Usuarios WHERE Matricula='"+inputMatricula.getText() +"';";
+                    ResultSet rst = conn.Select(query);
+                    int userId = -1;
+                    if (rst != null) {
+                            boolean empty = true;
+                            while(rst.next()) {
+                                    empty = false;
+                                    userId = Integer.parseInt(rst.getString("Id_Usuario"));
+                            }
+                            if(empty)JOptionPane.showMessageDialog(rootPane, "No existe la Matricula seleccionada");
+                    }
+                    int proyectId = -1;
+                    if(userId != -1){
+                        String filename = inputFileName.getText().replace(" ","");
+                        int point = filename.indexOf(".");
+                        filename = filename.substring(0, point);
+                        query = "INSERT INTO proyectos (Id_Usuario, Nombre, Fecha) VALUES("+userId+",'"+filename+"',"+inputDate.getText()+")";
+                        System.out.println(query);
+                        if(!conn.Query(query)){
+                            query = "SELECT Id_Proyecto FROM proyectos WHERE Nombre='"+filename+"' and Fecha="+inputDate.getText()+" and id_Usuario="+userId+";";
+                             System.out.println(query);
+                            rst = conn.Select(query);
+                            if (rst != null) {
+				while(rst.next()) {
+					proyectId = Integer.parseInt(rst.getString("Id_Proyecto"));
+				}                              
+                            }
+                        }else JOptionPane.showMessageDialog(rootPane, "Ha ocurrido un error en el guardado!");
+
+                    }
+                    if(proyectId != -1){
+                        query = "INSERT INTO proyectos_files VALUES("+proyectId+","+proyectId+", aplication/pdf,"+file+");";
+                        
+                        if(!conn.Query(query))JOptionPane.showMessageDialog(rootPane, "Archivo guardado correctamente");
+                        else JOptionPane.showMessageDialog(rootPane, "Falla al tratar de subir el archivo, el tamaño del archivo es muy grande");
+                        
+                    }
                    //Add file to SQL
                }else  JOptionPane.showMessageDialog(rootPane, "Extension de Archivo no compatible");
            }else {
@@ -236,37 +274,37 @@ public class Agregar extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new Agregar().setVisible(true);
-//            }
-//        });
-//    }
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Agregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Agregar().setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bntLoad;
