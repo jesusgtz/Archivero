@@ -6,9 +6,16 @@
 package tecnm.cmmi.agregar;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import sun.misc.IOUtils;
 import tecnm.cmmi.Login;
 import tecnm.cmmi.db.Connect;
 
@@ -211,6 +218,15 @@ public class Agregar extends javax.swing.JFrame {
                File pdf = file.getSelectedFile();
                if(pdf.getName().contains("pdf")){
                     inputFileName.setText(pdf.getName());
+                    FileInputStream fis = new FileInputStream(pdf);
+                    byte[] bFile = new byte[(int) pdf.length()];     
+                    try {
+                        //convert file into array of bytes
+                        fis.read(bFile);
+                        fis.close();
+                    }catch(Exception e){
+                            e.printStackTrace();
+                    }
                     Connect conn = new Connect();
                     String query = "SELECT Id_Usuario FROM Usuarios WHERE Matricula='"+inputMatricula.getText() +"';";
                     ResultSet rst = conn.Select(query);
@@ -243,11 +259,22 @@ public class Agregar extends javax.swing.JFrame {
 
                     }
                     if(proyectId != -1){
-                        query = "INSERT INTO proyectos_files VALUES("+proyectId+","+proyectId+", aplication/pdf,"+file+");";
-                        
-                        if(!conn.Query(query))JOptionPane.showMessageDialog(rootPane, "Archivo guardado correctamente");
-                        else JOptionPane.showMessageDialog(rootPane, "Falla al tratar de subir el archivo, el tamaño del archivo es muy grande");
-                        
+                        try {
+                            Class.forName("com.mysql.jdbc.Driver");
+                            Connection insert = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+ "DBCMMI_FINAL", "root", "");
+                            query = "INSERT INTO proyectos_files (Id_ProyectoFile, Id_Proyecto, MimeType, Data ) VALUES(?,?,?,?)";//("+proyectId+","+proyectId+", aplication/pdf, "+bFile+"]);";
+                            PreparedStatement pstmt = insert.prepareStatement(query);
+                            pstmt.setInt(1, proyectId);
+                            pstmt.setInt(2, proyectId);
+                            pstmt.setString(3, "aplication/pdf");
+                            pstmt.setBytes(4, bFile);
+                            pstmt.execute();
+    //                        System.out.println(query);
+    //                        if(!conn.Query(query))JOptionPane.showMessageDialog(rootPane, "Archivo guardado correctamente");
+    //                        else JOptionPane.showMessageDialog(rootPane, "Falla al tratar de subir el archivo, el tamaño del archivo es muy grande");
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        } 
                     }
                    //Add file to SQL
                }else  JOptionPane.showMessageDialog(rootPane, "Extension de Archivo no compatible");
@@ -258,7 +285,7 @@ public class Agregar extends javax.swing.JFrame {
          catch(Exception ex)
          {
            JOptionPane.showMessageDialog(rootPane,
-                 "No se ha cargado el archivo",
+                    ex.getMessage(),
                        "ADVERTENCIA!!!",JOptionPane.WARNING_MESSAGE);
           }
         //return texto;//El texto se almacena en el JTextArea
@@ -269,7 +296,7 @@ public class Agregar extends javax.swing.JFrame {
         log.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnBackMouseClicked
-    
+
     
     /**
      * @param args the command line arguments
