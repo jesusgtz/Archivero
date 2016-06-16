@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tecnm.cmmi.db;
 
 import java.sql.Connection;
@@ -10,8 +5,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 
@@ -39,7 +32,6 @@ public class Connect {
             Class.forName("com.mysql.jdbc.Driver");
             this.conn = DriverManager.getConnection(this.host + this.dbname, this.username, this.password);
 			this.stm = conn.createStatement();
-            // System.out.println("Conexion exitosa a base de datos...");
         } catch (ClassNotFoundException | SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
