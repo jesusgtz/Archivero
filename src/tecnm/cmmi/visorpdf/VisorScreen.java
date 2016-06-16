@@ -95,8 +95,17 @@ public class VisorScreen extends javax.swing.JFrame {
                     panelpdf.showPage(page);
                 }
             });
+			JButton cerrar_btn=new JButton("Cerrar");
+            cerrar_btn.addActionListener(new ActionListener(){
+                
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    cerrar();
+                }
+            });
             pabajo.add(banterior);
             pabajo.add(bsiguiente);
+			pabajo.add(cerrar_btn);
             add(panelpdf);
             add(pabajo,BorderLayout.SOUTH);
             setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -113,5 +122,11 @@ public class VisorScreen extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(VisorScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
+		
+		this.thiis = this;
     }
+	
+	private void cerrar() {
+		this.dispose();
+	}
 }
