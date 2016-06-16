@@ -3,6 +3,8 @@ package tecnm.cmmi;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import tecnm.cmmi.Usuario.Usuario;
+import tecnm.cmmi.admin.Admin;
 import tecnm.cmmi.db.Connect;
 
 public class Login extends javax.swing.JFrame {
@@ -58,7 +60,7 @@ public class Login extends javax.swing.JFrame {
 
         jLabel3.setText("Matricula");
 
-        matricula_txt.setText("1234567890");
+        matricula_txt.setText("12345678");
         matricula_txt.setToolTipText("Ingresa tu password");
 
         error_lbl.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -106,15 +108,29 @@ public class Login extends javax.swing.JFrame {
         
 		try {
 			Connect conn = new Connect();
-			String query = "SELECT Id_Usuario, Tipo FROM Usuarios WHERE Correo='"+ this.email_txt.getText() +"' AND Matricula='"+ this.matricula_txt.getText() +"';";
+			String query = "SELECT Id_Usuario, Matricula, Correo, Nombre, Apellidos, Tipo FROM Usuarios WHERE Correo='"+ this.email_txt.getText() +"' AND Matricula='"+ this.matricula_txt.getText() +"';";
 			ResultSet rst = conn.Select(query);
 			if (rst != null) {
 				boolean empty = true;
 				while(rst.next()) {
 					empty = false;
+					
+					int id = rst.getInt("Id_Usuario");
+					String matricula = rst.getString("Matricula");
+					String correo = rst.getString("Correo");
+					String nombre = rst.getString("Nombre") + rst.getString("Apellidos");
 					query = rst.getString("Tipo");
-					if("ADMIN".equals(query)) JOptionPane.showMessageDialog(null, "Acceso a 'Admin'", "Login", JOptionPane.INFORMATION_MESSAGE);
-					else JOptionPane.showMessageDialog(null, "Acceso a 'Student'", "Login", JOptionPane.INFORMATION_MESSAGE);
+					
+					if("ADMIN".equals(query)) {
+						//JOptionPane.showMessageDialog(null, "Acceso a 'Admin'", "Login", JOptionPane.INFORMATION_MESSAGE);
+						new Admin(id, matricula, correo, nombre).setVisible(true);
+						this.dispose();
+					}
+					else {
+						//JOptionPane.showMessageDialog(null, "Acceso a 'Student'", "Login", JOptionPane.INFORMATION_MESSAGE);
+						new Usuario(id, matricula, correo, nombre).setVisible(true);
+						this.dispose();
+					}
 				}
 				
 				if(empty) this.error_lbl.setText("Error: Usuario y/o contraseña no coinciden.");
