@@ -122,12 +122,10 @@ public class Login extends javax.swing.JFrame {
 					query = rst.getString("Tipo");
 					
 					if("ADMIN".equals(query)) {
-						//JOptionPane.showMessageDialog(null, "Acceso a 'Admin'", "Login", JOptionPane.INFORMATION_MESSAGE);
 						new Admin(id, matricula, correo, nombre).setVisible(true);
 						this.dispose();
 					}
 					else {
-						//JOptionPane.showMessageDialog(null, "Acceso a 'Student'", "Login", JOptionPane.INFORMATION_MESSAGE);
 						new Usuario(id, matricula, correo, nombre).setVisible(true);
 						this.dispose();
 					}
