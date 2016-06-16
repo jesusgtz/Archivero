@@ -231,10 +231,10 @@ public class Agregar extends javax.swing.JFrame {
                         String filename = inputFileName.getText().replace(" ","");
                         int point = filename.indexOf(".");
                         filename = filename.substring(0, point);
-                        query = "INSERT INTO proyectos (Id_Usuario, Nombre, Fecha) VALUES("+userId+",'"+filename+"','"+inputDate.getText()+"')";
+                        query = "INSERT INTO Proyectos (Id_Usuario, Nombre, Fecha) VALUES("+userId+",'"+filename+"','"+inputDate.getText()+"')";
                         System.out.println(query);
                         if(!conn.Query(query)){
-                            query = "SELECT Id_Proyecto FROM proyectos WHERE Nombre='"+filename+"' and Fecha='"+inputDate.getText()+"' and id_Usuario="+userId+";";
+                            query = "SELECT Id_Proyecto FROM Proyectos WHERE Nombre='"+filename+"' and Fecha='"+inputDate.getText()+"' and id_Usuario="+userId+";";
                              System.out.println(query);
                             rst = conn.Select(query);
                             if (rst != null) {
@@ -249,7 +249,7 @@ public class Agregar extends javax.swing.JFrame {
                         try {
                             Class.forName("com.mysql.jdbc.Driver");
                             Connection insert = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+ "DBCMMI_FINAL", "root", "");
-                            query = "INSERT INTO proyectos_files (Id_ProyectoFile, Id_Proyecto, MimeType, Data ) VALUES(?,?,?,?)";
+                            query = "INSERT INTO Proyectos_Files (Id_ProyectoFile, Id_Proyecto, MimeType, Data ) VALUES(?,?,?,?)";
                             PreparedStatement pstmt = insert.prepareStatement(query);
                             pstmt.setInt(1, proyectId);
                             pstmt.setInt(2, proyectId);
