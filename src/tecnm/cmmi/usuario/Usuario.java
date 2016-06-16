@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tecnm.cmmi.visorpdf.VisorScreen;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import tecnm.cmmi.db.Connect;
@@ -214,6 +215,9 @@ public class Usuario extends javax.swing.JFrame {
 
     private void visualizar_btnMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_visualizar_btnMouseReleased
         if(this.idProyecto != -1) {
+                        String foo = String.valueOf(this.idProyecto);
+                        System.out.println(foo+"fdfdsfsd");
+                        VisorScreen visor = new VisorScreen(foo);
 			JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
 		}
     }//GEN-LAST:event_visualizar_btnMouseReleased
