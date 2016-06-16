@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tecnm.cmmi.visorpdf;
 
 import java.awt.BorderLayout;
@@ -54,7 +49,7 @@ public class VisorScreen extends javax.swing.JFrame {
              * Seleccionarlo para desplegarse en el panel
              */
             Connect conn = new Connect();
-            String query = "SELECT * FROM proyectos_files WHERE Id_ProyectoFile='" + Id + "';";
+            String query = "SELECT * FROM Proyectos_Files WHERE Id_ProyectoFile='" + Id + "';";
             ResultSet rst = conn.Select(query);
             if (rst != null) {
                 while(rst.next()) {

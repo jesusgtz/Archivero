@@ -1,9 +1,7 @@
-package tecnm.cmmi.Usuario;
+package tecnm.cmmi.usuario;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import tecnm.cmmi.visorpdf.VisorScreen;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -162,11 +160,6 @@ public class Usuario extends javax.swing.JFrame {
                 visualizar_btnMouseReleased(evt);
             }
         });
-        visualizar_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                visualizar_btnActionPerformed(evt);
-            }
-        });
         jPanel2.add(visualizar_btn);
 
         agregar_btn.setText("Agregar");
@@ -222,12 +215,7 @@ public class Usuario extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_visualizar_btnMouseReleased
 
-    private void visualizar_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visualizar_btnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_visualizar_btnActionPerformed
-
     private void agregar_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregar_btnActionPerformed
-        // TODO add your handling code here:
         Agregar add = new Agregar();
         add.setVisible(true);
     }//GEN-LAST:event_agregar_btnActionPerformed
