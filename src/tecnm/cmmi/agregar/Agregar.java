@@ -247,15 +247,13 @@ public class Agregar extends javax.swing.JFrame {
                     }
                     if(proyectId != -1){
                         try {
-                            Class.forName("com.mysql.jdbc.Driver");
-                            Connection insert = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+ "DBCMMI_FINAL", "root", "");
-                            query = "INSERT INTO Proyectos_Files (Id_ProyectoFile, Id_Proyecto, MimeType, Data ) VALUES(?,?,?,?)";
-                            PreparedStatement pstmt = insert.prepareStatement(query);
-                            pstmt.setInt(1, proyectId);
-                            pstmt.setInt(2, proyectId);
-                            pstmt.setString(3, "aplication/pdf");
-                            pstmt.setBytes(4, bFile);
-                            pstmt.execute();
+							Class.forName("com.mysql.jdbc.Driver");
+							Connection insert = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+ "DBCMMI_FINAL", "root", "");
+							query = "INSERT INTO Proyectos_Files (Id_ProyectoFile, Id_Proyecto, MimeType, Data ) VALUES(NULL, ?, 'aplication/pdf', ?)";
+							PreparedStatement pstmt = insert.prepareStatement(query);
+							pstmt.setInt(1, proyectId);
+							pstmt.setBytes(2, bFile);
+							pstmt.execute();
 							
                             JOptionPane.showMessageDialog(rootPane, "Archivo guardado correctamente");
                         } catch (SQLException e) {
