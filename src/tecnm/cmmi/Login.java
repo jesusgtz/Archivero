@@ -2,7 +2,6 @@ package tecnm.cmmi;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 import tecnm.cmmi.Usuario.Usuario;
 import tecnm.cmmi.admin.Admin;
 import tecnm.cmmi.db.Connect;
