@@ -228,9 +228,7 @@ public class Agregar extends javax.swing.JFrame {
                     }
                     int proyectId = -1;
                     if(userId != -1){
-                        String filename = inputFileName.getText().replace(" ","");
-                        int point = filename.indexOf(".");
-                        filename = filename.substring(0, point);
+                        String filename = this.inputNameProyect.getText();
                         query = "INSERT INTO Proyectos (Id_Usuario, Nombre, Fecha) VALUES("+userId+",'"+filename+"','"+inputDate.getText()+"')";
                         System.out.println(query);
                         if(!conn.Query(query)){
