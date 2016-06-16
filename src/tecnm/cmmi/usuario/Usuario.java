@@ -211,7 +211,7 @@ public class Usuario extends javax.swing.JFrame {
                         String foo = String.valueOf(this.idProyecto);
                         System.out.println(foo+"fdfdsfsd");
                         VisorScreen visor = new VisorScreen(foo);
-			JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
+			//JOptionPane.showMessageDialog(this, "Visualizar PDF [ID: "+ this.idProyecto +"]", "Visualización de Proyectos", JOptionPane.INFORMATION_MESSAGE);
 		}
     }//GEN-LAST:event_visualizar_btnMouseReleased
 
