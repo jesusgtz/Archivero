@@ -122,8 +122,6 @@ public class VisorScreen extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(VisorScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
-		
-		this.thiis = this;
     }
 	
 	private void cerrar() {
